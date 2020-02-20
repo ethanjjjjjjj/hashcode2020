@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"fmt"
+	"log"
 	"os"
 	"strconv"
 )
@@ -40,8 +42,8 @@ func readIn(){
 	file.Close()
 
 	books, _ := strconv.Atoi(string(txtlines[0][0]))
-	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
-	days, _:= strconv.Atoi(string(txtlines[0][4]))
+	numlibs, _ := strconv.Atoi(string(txtlines[0][2]))
+	days, _ := strconv.Atoi(string(txtlines[0][4]))
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)
@@ -54,10 +56,10 @@ func readIn(){
 	file.Close()
 
 	books, _ := strconv.Atoi(string(txtlines[0][0]))
-	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
-	days, _:= strconv.Atoi(string(txtlines[0][4]))
+	numlibs, _ := strconv.Atoi(string(txtlines[0][2]))
+	days, _ := strconv.Atoi(string(txtlines[0][4]))
 
-	dataset := Dataset{books:books,numLibraries:numlibs,day:days}
+	dataset := Dataset{books: books, numLibraries: numlibs, day: days}
 	fmt.Println(dataset)
 
 	fmt.Println(string(txtlines[0][0]))
