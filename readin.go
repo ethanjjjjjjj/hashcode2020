@@ -6,7 +6,40 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 )
+
+type Dataset struct {
+	books        int
+	day          int
+	numLibraries int
+	libraries    []Library
+}
+
+type Library struct {
+	libraryID   int
+	numBooks    int
+	signupTime  int
+	booksPerDay int
+	books       []int
+}
+
+type Book struct {
+	bookID int
+	score  int
+}
+
+type libraryScan struct {
+	libraryID int
+	numBooks  int
+	books     []int
+}
+type Output struct {
+	numLibraries int
+	libraryScans []libraryScan
+}
+
+
 
 func writeOutput(o Output) {
 	f, _ := os.Create("out.txt")
@@ -42,43 +75,37 @@ func readIn(){
 	file.Close()
 
 
-	books, _ := strconv.Atoi(string(txtlines[0][0]))
-	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
-	days, _:= strconv.Atoi(string(txtlines[0][4]))
+	//first values
 
-	scores := string(txtlines[1])
-	bookList := make([]Book,books)
-	id := 0
-	s := ""
-	for _,c := range scores{
-		if unicode.IsSpace(c){
-			theScore,_ := strconv.Atoi(s)
-			newBook := Book{bookID:id,score:theScore}
-			bookList[id] = newBook
-			s = ""
-			id++
-		}else{
-			s = s +string(c)
-		}	
+	params := make([]string,3)
+	for i, num := range strings.Split(txtlines[0], " "){
+		params[i] = num
 	}
+	books, _ :=strconv.Atoi(params[0])
+	numlibs, _ :=strconv.Atoi(params[0])
+	days, _ :=strconv.Atoi(params[0])
 
+	//the line which contains the book scores
+	bookList := make([]Book,books)
+
+	for i, num := range strings.Split(txtlines[1]," "){
+		x,_ := strconv.Atoi(num)
+		bookList[i] = Book{bookID:i,score:x}
+	}
+	fmt.Println(bookList)
+	
 	librarys := make([]Library,numlibs)
-	for i:=0; i < numlibs; i++{
-		numbooks,_:= strconv.Atoi(string(txtlines[2*i+2][0]))
-		signtime,_ := strconv.Atoi(string(txtlines[2*i+2][2]))
-		bookspday,_:= strconv.Atoi(string(txtlines[2*i+2][4]))
+
+	for i:=2; i < len(txtlines); i=i+2{
+		params := strings.Split(txtlines[i]," ")
+		numbooks,_:= strconv.Atoi(params[0])
+		signtime,_ := strconv.Atoi(params[1])
+		bookspday,_:= strconv.Atoi(params[2])
 		booklist:= make([]int,numbooks)
-		id := 0
-		s := ""
-		for _, c := range string(txtlines[2*i+3]){
-			if unicode.IsSpace(c){
-				theScore,_:=strconv.Atoi(s)
-				booklist[id] = theScore
-				s = ""
-				id++
-			}else{
-				s = s +string(c)
-			}
+
+		for k, num := range strings.Split(txtlines[i+1]," "){
+			res,_ := strconv.Atoi(num)
+			booklist[k] = res
 		}
 		librarys[i] = Library{libraryID:i,numBooks:numbooks,signupTime:signtime,booksPerDay:bookspday,books:booklist}
 	}
