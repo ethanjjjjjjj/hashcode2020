@@ -22,7 +22,7 @@ func writeOutput(o Output) {
 	w.Flush()
 }
 
-/*func readIn(){
+func readIn(){
 	file, err := os.Open("a_example.txt")
 
 	if err != nil {
@@ -65,4 +65,9 @@ func writeOutput(o Output) {
 		fmt.Println(eachline)
 	}
 
-}*/
+}
+ 
+	dataset := Dataset{books:books,numLibraries:numlibs,day:days}
+	fmt.Println(dataset)
+	
+}
