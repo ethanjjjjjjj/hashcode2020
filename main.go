@@ -112,7 +112,7 @@ func formOutput() Output {
 			l.sumScore += l.sortedBooks[i].score
 		}
 	}
-	sortedLibraries := radixSortLibraries(ls)
+	sortedLibraries := radixSortLibrariesNoGo(ls, 10)
 	currentday := 0
 	out := Output{numLibraries: 0, libraryScans: make([]libraryScan, 0)}
 	for _, l := range sortedLibraries {
@@ -124,8 +124,11 @@ func formOutput() Output {
 		perday := l.booksPerDay
 		numBooksToAdd := (data.days - currentday) * perday
 		booksToAdd := l.sortedBooks[:numBooksToAdd]
-		for 
-		scanoutput := libraryScan{libraryID: l.libraryID,books}
+		bookstoaddids := make([]int, 0)
+		for i, b := range booksToAdd {
+			bookstoaddids = append(bookstoaddids, b.bookID)
+		}
+		scanoutput := libraryScan{libraryID: l.libraryID, books: bookstoaddids}
 	}
-
+	return out
 }
