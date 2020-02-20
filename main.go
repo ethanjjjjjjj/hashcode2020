@@ -4,7 +4,7 @@ import "fmt"
 
 type Dataset struct {
 	books        int
-	day          int
+	days         int
 	numLibraries int
 	libraries    []Library
 }
@@ -89,4 +89,8 @@ func main() {
 	c := make(chan []Book)
 	go radixSortBooks([]Book{Book{4, 4}, Book{6, 6}, Book{2, 2}, Book{9, 9}, Book{3, 3}}, 5, c)
 	fmt.Printf("%v", <-c)
+}
+
+func formOutput() Output {
+
 }
