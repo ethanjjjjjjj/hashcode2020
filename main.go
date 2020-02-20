@@ -32,22 +32,22 @@ type Output struct {
 	libraryScans []libraryScan
 }
 
-func radixSortBooksNoGo(books []int, i int) []int {
+func radixSortBooksNoGo(books []Book, i int) []Book {
 	if i < 0 {
 		return books
 	}
-	var ones = make([]int, 0)
-	var zeros = make([]int, 0)
+	var ones = make([]Book, 0)
+	var zeros = make([]Book, 0)
 	for _, n := range books {
-		if (n>>i)&0x1 == 0x1 {
+		if (n.bookID>>i)&0x1 == 0x1 {
 			ones = append(ones, n)
 		} else {
 			zeros = append(zeros, n)
 		}
 	}
 	if i%8 == 0 {
-		c1 := make(chan []int)
-		c2 := make(chan []int)
+		c1 := make(chan []Book)
+		c2 := make(chan []Book)
 		go radixSortBooks(ones, i-1, c1)
 		go radixSortBooks(zeros, i-1, c2)
 		return append(<-c1, (<-c2)...)
@@ -58,23 +58,23 @@ func radixSortBooksNoGo(books []int, i int) []int {
 	}
 }
 
-func radixSortBooks(books []int, i int, out chan []int) {
+func radixSortBooks(books []Book, i int, out chan []Book) {
 	if i < 0 {
 		out <- books
 		return
 	}
-	var ones = make([]int, 0)
-	var zeros = make([]int, 0)
+	var ones = make([]Book, 0)
+	var zeros = make([]Book, 0)
 	for _, n := range books {
-		if (n>>i)&0x1 == 0x1 {
+		if (n.bookID>>i)&0x1 == 0x1 {
 			ones = append(ones, n)
 		} else {
 			zeros = append(zeros, n)
 		}
 	}
 	if i%8 == 0 {
-		c1 := make(chan []int)
-		c2 := make(chan []int)
+		c1 := make(chan []Book)
+		c2 := make(chan []Book)
 		go radixSortBooks(ones, i-1, c1)
 		go radixSortBooks(zeros, i-1, c2)
 		out <- append(<-c1, (<-c2)...)
@@ -86,15 +86,7 @@ func radixSortBooks(books []int, i int, out chan []int) {
 }
 
 func main() {
-	//var bookScores []int
-	//Dataset data=readIn()
-	out := Output{numLibraries: 1, libraryScans: [...]libraryScan{libraryScan{}}}
-
-	write()
+	c := make(chan []Book)
+	go radixSortBooks([]Book{Book{4, 4}, Book{6, 6}, Book{2, 2}, Book{9, 9}, Book{3, 3}}, 5, c)
+	fmt.Printf("%v", <-c)
 }
-
-//func main() {
-//	c := make(chan []int)
-//	go radixSortBooks([]int{4, 6, 2, 9, 3}, 5, c)
-//	fmt.Printf("%v", <-c)
-//}
