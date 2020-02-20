@@ -10,13 +10,14 @@ type Dataset struct {
 }
 
 type Library struct {
-	libraryID   int
-	numBooks    int
-	signupTime  int
-	booksPerDay int
-	books       []Book
-	sumScore    int
-	sortedBooks []Book
+	libraryID    int
+	numBooks     int
+	signupTime   int
+	booksPerDay  int
+	books        []Book
+	sumScore     int
+	sortedBooks  []Book
+	timeSignedUp int
 }
 
 type Book struct {
@@ -42,10 +43,9 @@ func main() {
 
 func formOutput() Output {
 	data := readIn()
-
-	scannedBooks := make([]Book, 0)
-
 	ls := data.libraries
+	scannedBooks := make([]Book, 0)
+	signupOrder := make([]Library, len(ls))
 	channels := make([]chan []Book, len(ls))
 	for i, l := range ls {
 		c := make(chan []Book)
@@ -59,4 +59,19 @@ func formOutput() Output {
 			l.sumScore += l.sortedBooks[i].score
 		}
 	}
+	sortedLibraries := radixSortLibraries(ls)
+	currentday := 0
+	out := Output{numLibraries: 0, libraryScans: make([]libraryScan, 0)}
+	for _, l := range sortedLibraries {
+		currentday += l.signupTime
+		if currentday > data.days {
+			break
+		}
+		l.timeSignedUp = currentday
+		perday := l.booksPerDay
+		numBooksToAdd := (data.days - currentday) * perday
+		booksToAdd := l.sortedBooks[:numBooksToAdd]
+		scanoutput := libraryScan{libraryID: l.libraryID}
+	}
+
 }
