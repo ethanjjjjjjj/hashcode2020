@@ -7,11 +7,11 @@ import (
 	"strconv"
 )
 
-func readIn() {
-	d, _ := os.Open("a_example.txt")
-	scanner := bufio.NewScanner(d)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text())
+func readIn(){
+	file, err := os.Open("a_example.txt")
+ 
+	if err != nil {
+		log.Fatalf("failed opening file: %s", err)
 	}
 	//data =: Dataset{books = }
 
@@ -38,6 +38,20 @@ func readIn(){
 	if err != nil {
 		log.Fatalf("failed opening file: %s", err)
 	}
+ 
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+	var txtlines []string
+ 
+	for scanner.Scan() {
+		txtlines = append(txtlines, scanner.Text())
+	}
+ 
+	file.Close()
+
+	books, _ := strconv.Atoi(string(txtlines[0][0]))
+	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
+	days, _:= strconv.Atoi(string(txtlines[0][4]))
  
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanLines)

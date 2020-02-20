@@ -1,5 +1,13 @@
 package main
 
+import (
+    "fmt"
+	"os"
+	"log"
+	"bufio"
+	"strconv"
+)
+
 type Dataset struct {
 	books        int
 	day          int
@@ -16,5 +24,6 @@ type Library struct {
 }
 
 func main() {
+	
 
 }
