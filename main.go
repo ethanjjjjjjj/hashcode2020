@@ -35,6 +35,59 @@ type Output struct {
 	libraryScans []libraryScan
 }
 
+func radixSortBooksNoGo(books []Book, i int) []Book {
+	if i < 0 {
+		return books
+	}
+	var ones = make([]Book, 0)
+	var zeros = make([]Book, 0)
+	for _, n := range books {
+		if (n.bookID>>i)&0x1 == 0x1 {
+			ones = append(ones, n)
+		} else {
+			zeros = append(zeros, n)
+		}
+	}
+	if i%8 == 0 {
+		c1 := make(chan []Book)
+		c2 := make(chan []Book)
+		go radixSortBooks(ones, i-1, c1)
+		go radixSortBooks(zeros, i-1, c2)
+		return append(<-c1, (<-c2)...)
+	} else {
+		ones = radixSortBooksNoGo(ones, i-1)
+		zeros = radixSortBooksNoGo(zeros, i-1)
+		return append(ones, zeros...)
+	}
+}
+
+func radixSortBooks(books []Book, i int, out chan []Book) {
+	if i < 0 {
+		out <- books
+		return
+	}
+	var ones = make([]Book, 0)
+	var zeros = make([]Book, 0)
+	for _, n := range books {
+		if (n.bookID>>i)&0x1 == 0x1 {
+			ones = append(ones, n)
+		} else {
+			zeros = append(zeros, n)
+		}
+	}
+	if i%8 == 0 {
+		c1 := make(chan []Book)
+		c2 := make(chan []Book)
+		go radixSortBooks(ones, i-1, c1)
+		go radixSortBooks(zeros, i-1, c2)
+		out <- append(<-c1, (<-c2)...)
+	} else {
+		ones = radixSortBooksNoGo(ones, i-1)
+		zeros = radixSortBooksNoGo(zeros, i-1)
+		out <- append(ones, zeros...)
+	}
+}
+
 func main() {
 	c := make(chan []Book)
 	go radixSortBooks([]Book{Book{4, 4}, Book{6, 6}, Book{2, 2}, Book{9, 9}, Book{3, 3}}, 5, c)
@@ -71,7 +124,8 @@ func formOutput() Output {
 		perday := l.booksPerDay
 		numBooksToAdd := (data.days - currentday) * perday
 		booksToAdd := l.sortedBooks[:numBooksToAdd]
-		scanoutput := libraryScan{libraryID: l.libraryID}
+		for 
+		scanoutput := libraryScan{libraryID: l.libraryID,books}
 	}
 
 }
