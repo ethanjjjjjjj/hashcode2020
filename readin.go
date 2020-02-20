@@ -53,26 +53,7 @@ func readIn(){
 	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
 	days, _:= strconv.Atoi(string(txtlines[0][4]))
  
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanLines)
-	var txtlines []string
- 
-	for scanner.Scan() {
-		txtlines = append(txtlines, scanner.Text())
-	}
- 
-	file.Close()
-
-	books, _ := strconv.Atoi(string(txtlines[0][0]))
-	numlibs, _:= strconv.Atoi(string(txtlines[0][2]))
-	days, _:= strconv.Atoi(string(txtlines[0][4]))
-	
 	dataset := Dataset{books:books,numLibraries:numlibs,day:days}
 	fmt.Println(dataset)
-
-	fmt.Println(string(txtlines[0][0]))
-	for _, eachline := range txtlines {
-		fmt.Println(eachline)
-	}
 	
 }
