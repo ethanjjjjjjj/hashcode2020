@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -26,7 +26,7 @@ func writeOutput(o Output) {
 }
 
 func readIn() Dataset {
-	file, err := os.Open("a_example.txt")
+	/*file, err := os.Open("b_read_on.txt")
 
 	if err != nil {
 		log.Fatalf("failed opening file: %s", err)
@@ -40,7 +40,9 @@ func readIn() Dataset {
 		txtlines = append(txtlines, scanner.Text())
 	}
 
-	file.Close()
+	file.Close()*/
+	data, _ := ioutil.ReadFile("b_read_on.txt")
+	txtlines := strings.Split(string(data), "\n")
 
 	//first values
 
@@ -49,12 +51,12 @@ func readIn() Dataset {
 		params[i] = num
 	}
 	books, _ := strconv.Atoi(params[0])
-	numlibs, _ := strconv.Atoi(params[0])
-	days, _ := strconv.Atoi(params[0])
+	numlibs, _ := strconv.Atoi(params[1])
+	days, _ := strconv.Atoi(params[2])
 
 	//the line which contains the book scores
 	bookList := make([]Book, books)
-
+	fmt.Println(txtlines)
 	for i, num := range strings.Split(txtlines[1], " ") {
 		x, _ := strconv.Atoi(num)
 		bookList[i] = Book{bookID: i, score: x}
@@ -63,7 +65,7 @@ func readIn() Dataset {
 
 	librarys := make([]Library, numlibs)
 
-	for i := 2; i < len(txtlines); i = i + 2 {
+	for i := 2; i < len(txtlines)-2; i = i + 2 {
 		params := strings.Split(txtlines[i], " ")
 		numbooks, _ := strconv.Atoi(params[0])
 		signtime, _ := strconv.Atoi(params[1])
@@ -74,7 +76,7 @@ func readIn() Dataset {
 			res, _ := strconv.Atoi(num)
 			booklist[k] = bookList[res]
 		}
-		librarys[i] = Library{libraryID: i, numBooks: numbooks, signupTime: signtime, booksPerDay: bookspday, books: booklist}
+		librarys[(i-2)/2] = Library{libraryID: (i - 2) / 2, numBooks: numbooks, signupTime: signtime, booksPerDay: bookspday, books: booklist}
 	}
 
 	dataset := Dataset{books: books, numLibraries: numlibs, days: days, libraries: librarys}
