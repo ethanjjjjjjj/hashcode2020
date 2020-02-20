@@ -15,6 +15,26 @@ type Library struct {
 	books       []int
 }
 
+type Book struct {
+	bookID int
+	score  int
+}
+
+type libraryScan struct {
+	libraryID int
+	numBooks  int
+	books     []int
+}
+type Output struct {
+	numLibraries int
+	libraryScans []libraryScan
+}
+
 func main() {
+	//var bookScores []int
+	//Dataset data=readIn()
+	out := Output{numLibraries: 1, libraryScans: [...]libraryScan{libraryScan{}}}
+
+	write()
 
 }
