@@ -43,17 +43,19 @@ func formOutput() Output {
 	//scannedBooks := make([]Book, 0)
 	//signupOrder := make([]Library, len(ls))
 	channels := make([]chan []Book, len(ls))
-	for _, l := range ls {
+	for i, l := range ls {
 		c := make(chan []Book)
+		channels[i] = c
 		go radixSortBooks(l.books, 10, c)
 	}
 	for i, l := range ls {
 		l.sortedBooks = <-channels[i]
 	}
 	for _, l := range ls {
-		for i := 0; i < 5; i++ {
+		/*for i := 0; i < 0; i++ {
 			l.sumScore += l.sortedBooks[i].score
-		}
+		}*/
+		l.sumScore = 0
 	}
 	sortedLibraries := radixSortLibrariesNoGo(ls, 10)
 	currentday := 0
@@ -66,7 +68,13 @@ func formOutput() Output {
 		l.timeSignedUp = currentday
 		perday := l.booksPerDay
 		numBooksToAdd := (data.days - currentday) * perday
-		booksToAdd := l.sortedBooks[:numBooksToAdd]
+		var booksToAdd []Book
+		if numBooksToAdd > len(l.sortedBooks) {
+			booksToAdd = append(booksToAdd, l.sortedBooks[:len(l.sortedBooks)]...)
+		} else {
+			booksToAdd = append(booksToAdd, l.sortedBooks[:numBooksToAdd]...)
+
+		}
 		bookstoaddids := make([]int, 0)
 		for _, b := range booksToAdd {
 			bookstoaddids = append(bookstoaddids, b.bookID)
