@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"unicode"
 	"strings"
 )
 
@@ -57,7 +58,7 @@ func writeOutput(o Output) {
 	w.Flush()
 }
 
-func readIn(){
+func readIn() Dataset {
 	file, err := os.Open("a_example.txt")
 
 	if err != nil {
@@ -107,10 +108,10 @@ func readIn(){
 			res,_ := strconv.Atoi(num)
 			booklist[k] = res
 		}
-		librarys[i] = Library{libraryID:i,numBooks:numbooks,signupTime:signtime,booksPerDay:bookspday,books:booklist}
+		librarys[i] = Library{libraryID: i, numBooks: numbooks, signupTime: signtime, booksPerDay: bookspday, books: booklist}
 	}
- 
-	dataset := Dataset{books:books,numLibraries:numlibs,day:days,libraries:librarys}
+
+	dataset := Dataset{books: books, numLibraries: numlibs, day: days, libraries: librarys}
 	fmt.Println(dataset)
-	
+	return dataset
 }
