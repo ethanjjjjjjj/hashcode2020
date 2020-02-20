@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Dataset struct {
 	books        int
 	days         int
@@ -35,72 +33,17 @@ type Output struct {
 	libraryScans []libraryScan
 }
 
-func radixSortBooksNoGo(books []Book, i int) []Book {
-	if i < 0 {
-		return books
-	}
-	var ones = make([]Book, 0)
-	var zeros = make([]Book, 0)
-	for _, n := range books {
-		if (n.bookID>>i)&0x1 == 0x1 {
-			ones = append(ones, n)
-		} else {
-			zeros = append(zeros, n)
-		}
-	}
-	if i%8 == 0 {
-		c1 := make(chan []Book)
-		c2 := make(chan []Book)
-		go radixSortBooks(ones, i-1, c1)
-		go radixSortBooks(zeros, i-1, c2)
-		return append(<-c1, (<-c2)...)
-	} else {
-		ones = radixSortBooksNoGo(ones, i-1)
-		zeros = radixSortBooksNoGo(zeros, i-1)
-		return append(ones, zeros...)
-	}
-}
-
-func radixSortBooks(books []Book, i int, out chan []Book) {
-	if i < 0 {
-		out <- books
-		return
-	}
-	var ones = make([]Book, 0)
-	var zeros = make([]Book, 0)
-	for _, n := range books {
-		if (n.bookID>>i)&0x1 == 0x1 {
-			ones = append(ones, n)
-		} else {
-			zeros = append(zeros, n)
-		}
-	}
-	if i%8 == 0 {
-		c1 := make(chan []Book)
-		c2 := make(chan []Book)
-		go radixSortBooks(ones, i-1, c1)
-		go radixSortBooks(zeros, i-1, c2)
-		out <- append(<-c1, (<-c2)...)
-	} else {
-		ones = radixSortBooksNoGo(ones, i-1)
-		zeros = radixSortBooksNoGo(zeros, i-1)
-		out <- append(ones, zeros...)
-	}
-}
-
 func main() {
-	c := make(chan []Book)
-	go radixSortBooks([]Book{Book{4, 4}, Book{6, 6}, Book{2, 2}, Book{9, 9}, Book{3, 3}}, 5, c)
-	fmt.Printf("%v", <-c)
+	writeOutput(formOutput())
 }
 
 func formOutput() Output {
 	data := readIn()
 	ls := data.libraries
-	scannedBooks := make([]Book, 0)
-	signupOrder := make([]Library, len(ls))
+	//scannedBooks := make([]Book, 0)
+	//signupOrder := make([]Library, len(ls))
 	channels := make([]chan []Book, len(ls))
-	for i, l := range ls {
+	for _, l := range ls {
 		c := make(chan []Book)
 		go radixSortBooks(l.books, 10, c)
 	}
@@ -125,10 +68,11 @@ func formOutput() Output {
 		numBooksToAdd := (data.days - currentday) * perday
 		booksToAdd := l.sortedBooks[:numBooksToAdd]
 		bookstoaddids := make([]int, 0)
-		for i, b := range booksToAdd {
+		for _, b := range booksToAdd {
 			bookstoaddids = append(bookstoaddids, b.bookID)
 		}
 		scanoutput := libraryScan{libraryID: l.libraryID, books: bookstoaddids}
+		out.libraryScans = append(out.libraryScans, scanoutput)
 	}
 	return out
 }
