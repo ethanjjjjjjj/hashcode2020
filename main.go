@@ -17,6 +17,21 @@ type Library struct {
 	books       []int
 }
 
+type Book struct {
+	bookID int
+	score  int
+}
+
+type libraryScan struct {
+	libraryID int
+	numBooks  int
+	books     []int
+}
+type Output struct {
+	numLibraries int
+	libraryScans []libraryScan
+}
+
 func radixSortBooksNoGo(books []int, i int) []int {
 	if i < 0 {
 		return books
@@ -70,12 +85,16 @@ func radixSortBooks(books []int, i int, out chan []int) {
 	}
 }
 
-func libary(l Library, scoreBack chan int) {
-
-}
-
 func main() {
-	c := make(chan []int)
-	go radixSortBooks([]int{4, 6, 2, 9, 3}, 5, c)
-	fmt.Printf("%v", <-c)
+	//var bookScores []int
+	//Dataset data=readIn()
+	out := Output{numLibraries: 1, libraryScans: [...]libraryScan{libraryScan{}}}
+
+	write()
 }
+
+//func main() {
+//	c := make(chan []int)
+//	go radixSortBooks([]int{4, 6, 2, 9, 3}, 5, c)
+//	fmt.Printf("%v", <-c)
+//}
