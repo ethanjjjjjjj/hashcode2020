@@ -14,7 +14,9 @@ type Library struct {
 	numBooks    int
 	signupTime  int
 	booksPerDay int
-	books       []int
+	books       []Book
+	sumScore    int
+	sortedBooks []Book
 }
 
 type Book struct {
@@ -92,5 +94,23 @@ func main() {
 }
 
 func formOutput() Output {
+	data := readIn()
+
+	scannedBooks := make([]Book, 0)
+
+	ls := data.libraries
+	channels := make([]chan []Book, len(ls))
+	for i, l := range ls {
+		c := make(chan []Book)
+		go radixSortBooks(l.books, 10, c)
+	}
+	for i, l := range ls {
+		l.sortedBooks = <-channels[i]
+	}
+	for _, l := range ls {
+		for i := 0; i < 5; i++ {
+			l.sumScore += l.sortedBooks[i].score
+		}
+	}
 
 }
