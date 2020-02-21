@@ -10,7 +10,7 @@ import (
 )
 
 func writeOutput(o Output) {
-	f, _ := os.Create("out.txt")
+	f, _ := os.Create("Cout.txt")
 	w := bufio.NewWriter(f)
 
 	w.WriteString(strconv.Itoa(o.numLibraries) + "\n")
@@ -25,6 +25,59 @@ func writeOutput(o Output) {
 	w.Flush()
 }
 
+func gettext() []string {
+	data, _ := ioutil.ReadFile("c_incunabula.txt")
+	txtlines := strings.Split(string(data), "\n")
+	/*for _, s := range txtlines {
+		fmt.Println(s)
+	}*/
+	return txtlines
+}
+
+func parsetext(txtlines []string) Dataset {
+	params := strings.Split(txtlines[0], " ")
+	books, _ := strconv.Atoi(params[0])
+	fmt.Println(books)
+	numlibs, _ := strconv.Atoi(params[1])
+	fmt.Println(numlibs)
+	days, _ := strconv.Atoi(params[2])
+
+	scores := strings.Split(txtlines[1], " ")
+	scoresInts := make([]int, books)
+	for i, s := range scores {
+		scoresInts[i], _ = strconv.Atoi(s)
+	}
+	libarray := make([]Library, 0)
+	librarynum := 0
+
+	for i := 2; i < len(txtlines)-1; i += 2 {
+		librarystats := strings.Split(txtlines[i], " ")
+		if len(librarystats) < 3 {
+			break
+		}
+		numBooks, _ := strconv.Atoi(librarystats[0])
+		//fmt.Println(numBooks)
+
+		signuptime, _ := strconv.Atoi(librarystats[1])
+
+		booksperday, _ := strconv.Atoi(librarystats[2])
+
+		librarybooks := strings.Split(txtlines[i+1], " ")
+		bookslist := make([]Book, 0)
+		for _, b := range librarybooks {
+			booknum, _ := strconv.Atoi(b)
+			bookscore := scoresInts[booknum]
+			currentbook := Book{bookID: booknum, score: bookscore}
+			bookslist = append(bookslist, currentbook)
+		}
+		newLib := Library{libraryID: librarynum, numBooks: numBooks, signupTime: signuptime, booksPerDay: booksperday, books: bookslist}
+		librarynum++
+
+		libarray = append(libarray, newLib)
+	}
+	data := Dataset{books: books, days: days, numLibraries: numlibs, libraries: libarray}
+	return data
+}
 func readIn() Dataset {
 	/*file, err := os.Open("b_read_on.txt")
 
@@ -41,11 +94,10 @@ func readIn() Dataset {
 	}
 
 	file.Close()*/
-	data, _ := ioutil.ReadFile("b_read_on.txt")
-	txtlines := strings.Split(string(data), "\n")
 
 	//first values
-
+	data, _ := ioutil.ReadFile("a_example.txt")
+	txtlines := strings.Split(string(data), "\n")
 	params := make([]string, 3)
 	for i, num := range strings.Split(txtlines[0], " ") {
 		params[i] = num
@@ -56,12 +108,12 @@ func readIn() Dataset {
 
 	//the line which contains the book scores
 	bookList := make([]Book, books)
-	fmt.Println(txtlines)
+	//fmt.Println(txtlines)
 	for i, num := range strings.Split(txtlines[1], " ") {
 		x, _ := strconv.Atoi(num)
 		bookList[i] = Book{bookID: i, score: x}
 	}
-	fmt.Println(bookList)
+	//fmt.Println(bookList)
 
 	librarys := make([]Library, numlibs)
 
@@ -80,6 +132,6 @@ func readIn() Dataset {
 	}
 
 	dataset := Dataset{books: books, numLibraries: numlibs, days: days, libraries: librarys}
-	fmt.Println(dataset)
+	//fmt.Println(dataset)
 	return dataset
 }

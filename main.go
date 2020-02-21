@@ -34,11 +34,14 @@ type Output struct {
 }
 
 func main() {
-	writeOutput(formOutput())
+	gettext()
+	data := parsetext(gettext())
+	writeOutput(formOutput(data))
+
 }
 
-func formOutput() Output {
-	data := readIn()
+func formOutput(data Dataset) Output {
+	//data := readIn()
 	ls := data.libraries
 	//scannedBooks := make([]Book, 0)
 	//signupOrder := make([]Library, len(ls))
@@ -48,14 +51,29 @@ func formOutput() Output {
 		channels[i] = c
 		go radixSortBooks(l.books, 10, c)
 	}
-	for i, l := range ls {
-		l.sortedBooks = <-channels[i]
+	for i := 0; i < len(ls); i++ {
+		booksSorted := <-channels[i]
+		ls[i].sortedBooks = append(ls[i].sortedBooks, booksSorted...)
+		//fmt.Println(ls[i])
 	}
 	for _, l := range ls {
-		/*for i := 0; i < 0; i++ {
-			l.sumScore += l.sortedBooks[i].score
-		}*/
-		l.sumScore = 0
+
+		//fmt.Println(l)
+		constraint := 5
+
+		if l.numBooks < 5 {
+			constraint = l.numBooks
+			for i := 0; i < constraint; i++ {
+				l.sumScore += l.sortedBooks[i].score
+			}
+		} else if l.numBooks == 0 {
+			l.sumScore = 0
+		} else {
+			for i := 0; i < constraint; i++ {
+				l.sumScore += l.sortedBooks[i].score
+			}
+		}
+
 	}
 	sortedLibraries := radixSortLibrariesNoGo(ls, 10)
 	currentday := 0
@@ -65,6 +83,7 @@ func formOutput() Output {
 		if currentday > data.days {
 			break
 		}
+		out.numLibraries++
 		l.timeSignedUp = currentday
 		perday := l.booksPerDay
 		numBooksToAdd := (data.days - currentday) * perday
@@ -75,11 +94,12 @@ func formOutput() Output {
 			booksToAdd = append(booksToAdd, l.sortedBooks[:numBooksToAdd]...)
 
 		}
+		l.numBooks = len(booksToAdd)
 		bookstoaddids := make([]int, 0)
 		for _, b := range booksToAdd {
 			bookstoaddids = append(bookstoaddids, b.bookID)
 		}
-		scanoutput := libraryScan{libraryID: l.libraryID, books: bookstoaddids}
+		scanoutput := libraryScan{libraryID: l.libraryID, books: bookstoaddids, numBooks: len(booksToAdd)}
 		out.libraryScans = append(out.libraryScans, scanoutput)
 	}
 	return out
