@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func writeOutput(o Output) {
-	f, _ := os.Create("Cout.txt")
+func writeOutput(o Output, name string) {
+	f, _ := os.Create(name + "out.txt")
 	w := bufio.NewWriter(f)
 
 	w.WriteString(strconv.Itoa(o.numLibraries) + "\n")
@@ -25,8 +25,8 @@ func writeOutput(o Output) {
 	w.Flush()
 }
 
-func gettext() []string {
-	data, _ := ioutil.ReadFile("c_incunabula.txt")
+func gettext(filename string) []string {
+	data, _ := ioutil.ReadFile(filename)
 	txtlines := strings.Split(string(data), "\n")
 	/*for _, s := range txtlines {
 		fmt.Println(s)

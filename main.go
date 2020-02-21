@@ -34,9 +34,18 @@ type Output struct {
 }
 
 func main() {
-	gettext()
-	data := parsetext(gettext())
-	writeOutput(formOutput(data))
+	data := parsetext(gettext("a_example.txt"))
+	writeOutput(formOutput(data), "A")
+	data = parsetext(gettext("b_read_on.txt"))
+	writeOutput(formOutput(data), "B")
+	data = parsetext(gettext("c_incunabula.txt"))
+	writeOutput(formOutput(data), "C")
+	data = parsetext(gettext("d_tough_choices.txt"))
+	writeOutput(formOutput(data), "D")
+	data = parsetext(gettext("e_so_many_books.txt"))
+	writeOutput(formOutput(data), "E")
+	data = parsetext(gettext("f_libraries_of_the_world.txt"))
+	writeOutput(formOutput(data), "F")
 
 }
 
@@ -49,7 +58,7 @@ func formOutput(data Dataset) Output {
 	for i, l := range ls {
 		c := make(chan []Book)
 		channels[i] = c
-		go radixSortBooks(l.books, 10, c)
+		go radixSortBooks(l.books, 16, c)
 	}
 	for i := 0; i < len(ls); i++ {
 		booksSorted := <-channels[i]
@@ -75,7 +84,7 @@ func formOutput(data Dataset) Output {
 		}
 
 	}
-	sortedLibraries := radixSortLibrariesNoGo(ls, 10)
+	sortedLibraries := radixSortLibrariesNoGo(ls, 16)
 	currentday := 0
 	out := Output{numLibraries: 0, libraryScans: make([]libraryScan, 0)}
 	for _, l := range sortedLibraries {
