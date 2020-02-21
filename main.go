@@ -58,7 +58,7 @@ func formOutput(data Dataset) Output {
 	for i, l := range ls {
 		c := make(chan []Book)
 		channels[i] = c
-		go radixSortBooks(l.books, 16, c)
+		go radixSortBooks(l.books, 14, c)
 	}
 	for i := 0; i < len(ls); i++ {
 		booksSorted := <-channels[i]
@@ -68,9 +68,9 @@ func formOutput(data Dataset) Output {
 	for _, l := range ls {
 
 		//fmt.Println(l)
-		constraint := 5
+		constraint := 50
 
-		if l.numBooks < 5 {
+		if l.numBooks < constraint {
 			constraint = l.numBooks
 			for i := 0; i < constraint; i++ {
 				l.sumScore += l.sortedBooks[i].score
@@ -84,7 +84,7 @@ func formOutput(data Dataset) Output {
 		}
 
 	}
-	sortedLibraries := radixSortLibrariesNoGo(ls, 16)
+	sortedLibraries := radixSortLibrariesNoGo(ls, 14)
 	currentday := 0
 	out := Output{numLibraries: 0, libraryScans: make([]libraryScan, 0)}
 	for _, l := range sortedLibraries {
